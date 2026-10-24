@@ -1,80 +1,79 @@
 # CV Studio
 
-A focused React application for creating a professional CV from personal, education, and practical experience details. Built for [The Odin Project's CV Application assignment](https://www.theodinproject.com/lessons/node-path-react-new-cv-application).
+A React application that turns personal, education, and work experience details into a readable CV. Built for [The Odin Project's CV Application assignment](https://www.theodinproject.com/lessons/node-path-react-new-cv-application) with JavaScript, Vite, and plain CSS.
 
 ## Features
 
-- Controlled forms with clearly labeled personal, education, and experience fields.
-- Whole-CV submission, readable document preview, and repeatable editing with values preserved.
-- Native required-field, email, and date validation, plus whitespace-only text validation.
+- Personal information, education, and practical experience forms.
+- Whole-CV preview with editing and resubmission that preserve entered values.
+- Required-field, email, and date validation, including whitespace-only text checks.
 - Experience end month constrained by the selected start month.
 - Human-readable dates and preserved responsibility line breaks.
-- Responsive layouts, visible keyboard focus, and safe wrapping for long content.
+- Responsive layouts and safe wrapping for long content.
 
-## Run locally
+## Usage
 
-Use an actively supported Node.js version compatible with Vite: Node 20.19+, 22.12+, or newer supported releases. Node 24 was used for development. In WSL, use Linux Node/npm rather than Windows npm.
+Complete all three sections; every field is required. Select **Create CV** to review the formatted document. Select **Edit CV** to return to the populated form, update your details, and submit again.
+
+Your information stays in the browser's memory and is not sent to a service. Refreshing or closing the page clears it.
+
+## Local development
+
+Prerequisites: Node.js 24 and npm.
+
+Clone the repository, enter its directory, and install dependencies:
 
 ```sh
+git clone https://github.com/jan-christopher-buen/odin-cv-application.git
+cd odin-cv-application
 npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. For a production build and local preview:
+Open the local URL printed by Vite.
 
-```sh
-npm run build
-npm run preview
-```
+| Command                | Purpose                                                  |
+| ---------------------- | -------------------------------------------------------- |
+| `npm run dev`          | Start the development server.                            |
+| `npm run build`        | Build the production app into `dist/`.                   |
+| `npm run preview`      | Serve the production build locally; run the build first. |
+| `npm run lint`         | Check JavaScript and React rules with ESLint.            |
+| `npm run format:check` | Check formatting with Prettier.                          |
+| `npm run format`       | Apply Prettier formatting.                               |
 
-Project checks:
+## Architecture and state
 
-```sh
-npm run lint
-npm run format:check
-npm run format
-```
+Components live in `src/components/`, with CSS in `src/styles/`.
 
-The last command applies formatting. Prettier is installed locally with an exact version; the optional VS Code extension is `esbenp.prettier-vscode`.
+- `App` owns `cvData`, grouped into general, education, and experience objects, and the `isEditing` view flag.
+- `CVForm` composes `GeneralInformation`, `EducationInformation`, and `ExperienceInformation`.
+- `Field` pairs labels with controlled inputs or a textarea.
+- `CVPreview` renders the submitted information as semantic HTML and formats dates for display.
 
-## Use
+Child components receive data and callbacks through props. Each input change updates the affected nested object immutably using a state updater. Editing changes only the view flag, preserving the same data when the form appears again. Form values have one source of truth; display dates are derived rather than stored in state. React StrictMode remains enabled.
 
-Complete all three sections; every field is required. Select **Create CV** to display your information as a CV. Select **Edit CV** to return to the populated form, change any field, and submit again.
+## Responsive design and accessibility
 
-Data stays in React memory and is not sent to a service. Refreshing or closing the page clears it.
+The form uses one column on narrow screens and two columns on wider screens, with layouts designed for widths of 320px and above. Flexible document sizing and text wrapping accommodate long names, emails, and responsibilities.
 
-## Design
-
-`App` owns the nested `cvData` object and `isEditing` state. `CVForm` groups `GeneralInformation`, `EducationInformation`, and `ExperienceInformation`. A small `Field` component keeps labels and controlled inputs consistent. `CVPreview` renders the same data as semantic HTML and formats dates only for display.
-
-Input callbacks pass a section and field change to `App`, which copies the affected nested object with a state updater. Editing changes only the view flag, so the data remains available when the form mounts again. There is no duplicate saved/draft state, effect, ref, reducer, or persistence layer. React StrictMode stays enabled.
-
-Forms use fieldsets, legends, associated labels, native validation, and a logical tab order. Each view has one main heading. System fonts, visible focus outlines, flexible grids, and content wrapping support narrow screens. The full-name input and Edit CV button receive autofocus when their respective views mount, keeping keyboard interaction available without effects or refs. Browser and assistive-technology behavior should be checked during manual review.
-
-This project practices component composition, controlled inputs, lifting state, immutable updates, props, event handling, and conditional rendering.
+Fieldsets and legends group related inputs. Explicit labels, appropriate input types, native validation, and visible focus indicators support keyboard use. Each view has one main heading and a logical heading order. Focus moves to the full-name input when the form opens and to **Edit CV** when the preview opens.
 
 ## Limitations
 
 - One education entry and one practical experience entry.
-- In-memory data only; refresh clears the form.
+- In-memory data only; no persistence between page loads.
 - No PDF export, backend, accounts, or cloud storage.
-- No automated browser or React test suite.
+
+## Learning outcomes
+
+This project applies component composition, controlled inputs, lifting state, immutable nested updates, props, event handling, and conditional rendering. It also practices native form validation, semantic HTML, and responsive CSS.
 
 ## Deployment
 
-After pushing the repository, import it into Vercel or Netlify using the provider's GitHub repository import. Use the Vite preset, build command `npm run build`, and output directory `dist`. Use a compatible Node.js version. Root hosting requires no subpath base or router configuration. No environment secrets are required.
+Import the GitHub repository into Vercel or Netlify and select the Vite preset:
 
-`node_modules/` and `dist/` are intentionally ignored. A live-demo URL can be added after deployment is verified.
+- Build command: `npm run build`
+- Output directory: `dist`
+- Node.js version: 24
 
-## Manual review
-
-Run `npm run dev` and open the printed URL in a modern browser. No browser automation dependency is required.
-
-1. Confirm all 11 fields have labels. Submit an empty form, then try an invalid email and whitespace-only name, school, company, or responsibilities; each must prevent submission. Correct each value and confirm its error clears.
-2. Use fictional details such as `Alex Sample`, `alex@example.com`, `+63 917 000 0000`, `Sample University`, `Computer Science`, `2020-06-15`, `Example Company`, `Developer`, `2021-01`, and `2023-12`. Enter two lines in responsibilities. Confirm the international phone format is accepted.
-3. Set the end month before the start month and attempt submission. Correct it, then move the start month after the end month and confirm submission is blocked again. Equal start/end months should be accepted.
-4. Create the CV and check every value, readable dates, and responsibility line breaks. Enter Unicode, long names/emails, and literal `<script>` text to check safe text rendering and wrapping.
-5. Select Edit CV, verify every value remains, change several fields, and repeat the submit/edit cycle at least twice.
-6. Use only Tab, Shift+Tab, and Enter to review labels, visible focus, error feedback, and focus after switching views. Inspect the browser console for React warnings or errors.
-7. Review both views at viewport widths of 320, 390, 768, and 1280 pixels. Check that long content wraps without clipping or horizontal page scrolling.
-8. Repeat a complete create/edit cycle with `npm run build` and `npm run preview`. Refresh and confirm the blank form returns.
+Use root hosting with Vite's default base path. No environment variables or router configuration are required. Generated `dist/` files and `node_modules/` are excluded from version control.
