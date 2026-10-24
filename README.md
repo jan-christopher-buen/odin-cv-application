@@ -2,6 +2,8 @@
 
 A React application that turns personal, education, and work experience details into a readable CV. Built for [The Odin Project's CV Application assignment](https://www.theodinproject.com/lessons/node-path-react-new-cv-application) with JavaScript, Vite, and plain CSS.
 
+[Live demo](https://odin-cv-application-bice.vercel.app/)
+
 ## Features
 
 - Personal information, education, and practical experience forms.
@@ -70,7 +72,7 @@ This project applies component composition, controlled inputs, lifting state, im
 
 ## Deployment
 
-Import the GitHub repository into Vercel or Netlify and select the Vite preset:
+The live application is hosted on Vercel. To deploy your own instance, import the GitHub repository into Vercel and select the Vite preset:
 
 - Build command: `npm run build`
 - Output directory: `dist`
