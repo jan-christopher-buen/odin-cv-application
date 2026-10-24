@@ -21,6 +21,7 @@ export default function App() {
 
   function handleChange(section, event) {
     const { name, value } = event.target
+    event.target.setCustomValidity('')
     setCvData((previousData) => ({
       ...previousData,
       [section]: { ...previousData[section], [name]: value },
@@ -29,6 +30,13 @@ export default function App() {
 
   function handleSubmit(event) {
     event.preventDefault()
+    const form = event.currentTarget
+    for (const field of form.elements) {
+      if (field.required && !field.value.trim()) {
+        field.setCustomValidity('Please enter a value, not only spaces.')
+      }
+    }
+    if (!form.reportValidity()) return
     setIsEditing(false)
   }
 

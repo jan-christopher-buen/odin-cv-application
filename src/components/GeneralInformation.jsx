@@ -14,6 +14,7 @@ export default function GeneralInformation({ data, onChange }) {
           value={data.fullName}
           onChange={onChange}
           autoComplete="name"
+          autoFocus
         />
         <Field
           label="Email"

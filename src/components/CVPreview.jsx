@@ -2,11 +2,15 @@ import '../styles/preview.css'
 
 function formatDate(value, includeDay = false) {
   const [year, month, day = 1] = value.split('-').map(Number)
+  // Set the full year explicitly, including years below 100.
+  const date = new Date(0)
+  date.setFullYear(year, month - 1, day)
+  date.setHours(12, 0, 0, 0)
   return new Intl.DateTimeFormat('en', {
     year: 'numeric',
     month: 'long',
     ...(includeDay ? { day: 'numeric' } : {}),
-  }).format(new Date(year, month - 1, day))
+  }).format(date)
 }
 
 export default function CVPreview({ data, onEdit }) {
@@ -15,7 +19,7 @@ export default function CVPreview({ data, onEdit }) {
     <>
       <div className="preview-toolbar">
         <p>Your CV is ready. Review it below.</p>
-        <button type="button" onClick={onEdit}>
+        <button type="button" onClick={onEdit} autoFocus>
           Edit CV
         </button>
       </div>
